@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "Pool3D"
+name = "pool3_d"
 version = "0.1.0"
