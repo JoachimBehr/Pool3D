@@ -1,4 +1,4 @@
-// Entry point for non-wasm
+// Entry psoint for non-wasm
 #[cfg(not(target_arch = "wasm32"))]
 #[tokio::main]
 async fn main() {
@@ -11,28 +11,38 @@ enum ControlType {
     Fly,
 }
 
-struct XRSphere {
-    pos: Vector3<f32>,  // Assuming pos, vel, momentum, angular_vel are all f64, change as per your need
-    vel: Vector3<f32>,
-    init_pos: Vector3<f32>,  // Assuming pos, vel, momentum, angular_vel are all f64, change as per your need
-    init_vel: Vector3<f32>,
-    radius: f32,
-    mass: f32,
-    color: Color,
-    restitution: f32,
-    us: f32,
-    ur: f32,
-    theta: f32,
-    angular_vel: Vector4<f32>,
-    net_force: Vector3<f32>,
-    f_ext: Vector3<f32>,
-    k: f32,
-    p: Vector3<f32>,
-    collision: bool,
-    momentum: Vector3<f32>,
-    sphere: ModelPart<PhysicalMaterial>,
-    light: PointLight,
-    body_handle: RigidBodyHandle,
+
+use three_d::*;
+use three_d::Window;
+use three_d::egui::*;
+use three_d_asset::io::*;
+use rapier3d::prelude::*;
+use std::f32::consts::PI;
+use three_d::*;
+use rapier3d::prelude::*;
+
+pub struct XRSphere {
+    pub pos: Vector3<f32>,  // Assuming pos, vel, momentum, angular_vel are all f64, change as per your need
+    pub vel: Vector3<f32>,
+    pub init_pos: Vector3<f32>,  // Assuming pos, vel, momentum, angular_vel are all f64, change as per your need
+    pub init_vel: Vector3<f32>,
+    pub radius: f32,
+    pub mass: f32,
+    pub color: Color,
+    pub restitution: f32,
+    pub us: f32,
+    pub ur: f32,
+    pub theta: f32,
+    pub angular_vel: Vector4<f32>,
+    pub net_force: Vector3<f32>,
+    pub f_ext: Vector3<f32>,
+    pub k: f32,
+    pub p: Vector3<f32>,
+    pub collision: bool,
+    pub momentum: Vector3<f32>,
+    pub sphere: ModelPart<PhysicalMaterial>,
+    pub light: PointLight,
+    pub body_handle: RigidBodyHandle,
 }
 
 impl XRSphere {
@@ -43,53 +53,53 @@ impl XRSphere {
             init_vel: Vector3<f32>, 
             radius: f32, mass: f32, 
             sphere: ModelPart<PhysicalMaterial>, 
-            context: &three_d::Context) -> Self {
-        let pos: Vector3<f32> = pos;
-        let vel: Vector3<f32> = vel;
-        let init_pos: Vector3<f32> = pos;
-        let init_vel: Vector3<f32> = vel;
-        let radius: f32 = radius;
-        let mass: f32 = mass;
-        let color: Color = Color::WHITE;
-        let restitution: f32 = 0.95;
-        let us: f32 = 0.05;
-        let ur: f32 = 0.02;
-        let theta: f32 = 0.0;
-        let angular_vel: Vector4<f32> = Vector4::new(0.0, 0.0, 0.0, 0.0);
-        let net_force: Vector3<f32> = Vector3::new(0.0, 0.0, 0.0);
-        let f_ext: Vector3<f32> = Vector3::new(0.0, 0.0, 0.0);
-        let k: f32 = 500.0;
-        let p: Vector3<f32> = Vector3::new(0.0, 0.0, 0.0);
-        let collision: bool = false; 
-        let momentum: Vector3<f32> = Vector3::new(0.0, 0.0, 0.0);
-        let context: &three_d::Context = context;
-        let light: PointLight = PointLight::new(context, 1.0, Color::WHITE, &init_pos, Attenuation::default());
-        let mut sphere: ModelPart<PhysicalMaterial> = sphere;
-        let body_handle: RigidBodyHandle = RigidBodyHandle::default();
-        sphere.set_transformation(Mat4::from_translation(init_pos) * Mat4::from_scale(1.0));
-        Self {
-                pos, 
-                vel, 
-                init_pos, 
-                init_vel, 
-                radius,
-                mass, 
-                color,
-                restitution,
-                us,
-                ur,
-                theta,
-                angular_vel, 
-                net_force, 
-                f_ext,  
-                k, 
-                p, 
-                collision, 
-                momentum,  
-                sphere,
-                light,
-                body_handle,
-            }
+            context: &three_d::Context) -> XRSphere {
+                let pos: Vector3<f32> = pos;
+                let vel: Vector3<f32> = vel;
+                let init_pos: Vector3<f32> = pos;
+                let init_vel: Vector3<f32> = vel;
+                let radius: f32 = radius;
+                let mass: f32 = mass;
+                let color: Color = Color::WHITE;
+                let restitution: f32 = 0.95;
+                let us: f32 = 0.05;
+                let ur: f32 = 0.02;
+                let theta: f32 = 0.0;
+                let angular_vel: Vector4<f32> = Vector4::new(0.0, 0.0, 0.0, 0.0);
+                let net_force: Vector3<f32> = Vector3::new(0.0, 0.0, 0.0);
+                let f_ext: Vector3<f32> = Vector3::new(0.0, 0.0, 0.0);
+                let k: f32 = 500.0;
+                let p: Vector3<f32> = Vector3::new(0.0, 0.0, 0.0);
+                let collision: bool = false; 
+                let momentum: Vector3<f32> = Vector3::new(0.0, 0.0, 0.0);
+                let context: &three_d::Context = context;
+                let light: PointLight = PointLight::new(context, 1.0, Color::WHITE, &init_pos, Attenuation::default());
+                let mut sphere: ModelPart<PhysicalMaterial> = sphere;
+                let body_handle: RigidBodyHandle = RigidBodyHandle::default();
+                sphere.set_transformation(Mat4::from_translation(init_pos) * Mat4::from_scale(1.0));
+                XRSphere {
+                        pos, 
+                        vel, 
+                        init_pos, 
+                        init_vel, 
+                        radius,
+                        mass, 
+                        color,
+                        restitution,
+                        us,
+                        ur,
+                        theta,
+                        angular_vel, 
+                        net_force, 
+                        f_ext,  
+                        k, 
+                        p, 
+                        collision, 
+                        momentum,  
+                        sphere,
+                        light,
+                        body_handle,
+                }
     }
 
     pub fn init(&mut self, rigid_body_set: &mut RigidBodySet) {
@@ -98,10 +108,14 @@ impl XRSphere {
         rigid_body_set[self.body_handle].set_linvel(vector![0.0, 0.0, 0.0], true);
         rigid_body_set[self.body_handle].set_angvel(vector![0.0, 0.0, 0.0], true);
         rigid_body_set[self.body_handle].set_position(Isometry::new(
-            vector![self.init_pos.x, self.init_pos.y, self.init_pos.z], 
+        vector![self.init_pos.x, self.init_pos.y, self.init_pos.z], 
             vector![0.0, 0.0, 0.0]), true);
         self.angular_vel = Vector4::new(self.vel.x / self.radius, self.vel.y/self.radius,-self.vel.z/self.radius, 0.0);
-//            assert_eq!(*rigid_body_set[self.body_handle].position(), Isometry::new(vector![self.init_pos.x, self.init_pos.y, self.init_pos.z], vector![0.0, 0.0, 0.0]));
+    //            assert_eq!(*rigid_body_set[self.body_handle].position(), Isometry::new(vector![self.init_pos.x, self.init_pos.y, self.init_pos.z], vector![0.0, 0.0, 0.0]));
+    }
+
+    pub fn init_pos(&self) -> Vector3<f32> {
+        self.init_pos
     }
 
     pub fn set_light(&mut self, intensity: f32, color: Color, attenuation: Attenuation) {
@@ -131,7 +145,7 @@ impl XRSphere {
         let is_collision = is_collisionx && is_collisiony && is_collisionz;       
         if is_collision {
             self.collision = self.collision || is_collision;
-//            println!("COLLISION!");
+    //            println!("COLLISION!");
 
             let restitution: f32 = 0.5;
             let nv: Vector3<f32> = v_proj_to_vy0.normalize();
@@ -143,7 +157,7 @@ impl XRSphere {
 
             if self.vel.magnitude() > 1.5 && self.collision {
                 self.us = 0.04;     
-//                friction = -self.us * self.vel.magnitude() * nv;           
+    //                friction = -self.us * self.vel.magnitude() * nv;           
             } else if self.vel.magnitude() > 0.0 && self.collision {
                 self.us = 0.03;     
                 friction = -self.us * self.vel.magnitude() * nv;           
@@ -159,7 +173,7 @@ impl XRSphere {
     }
 
     pub fn runge_kutta_step(&mut self, gravity: &Vector3<f32>, dt: f32) {
-//        const gravity: Vector3<f32> = Vector3::new(0.0, -9.81, 0.0); // Assuming Earth gravity
+    //        const gravity: Vector3<f32> = Vector3::new(0.0, -9.81, 0.0); // Assuming Earth gravity
 
         let k1_pos: Vector3<f32> = dt * self.vel;
         let k1_vel: Vector3<f32> = dt * *gravity;
@@ -178,37 +192,28 @@ impl XRSphere {
     }
 
     pub fn update(&mut self, rigid_body_set: &mut RigidBodySet) {
-//        let transformed_point = rigid_body_set[self.body_handle].position().rotation.as_vector().data.0.to_vec();
-//        let x = transformed_point[0];
-//        let rotation = Vector3::new(x[0],  x[1], x[2]); 
-//        self.sphere.set_transformation(Mat4::from_translation(self.pos) * Mat4::from_translation(rotation) *  Mat4::from_scale(1.0));
+    //        let transformed_point = rigid_body_set[self.body_handle].position().rotation.as_vector().data.0.to_vec();
+    //        let x = transformed_point[0];
+    //        let rotation = Vector3::new(x[0],  x[1], x[2]); 
+    //        self.sphere.set_transformation(Mat4::from_translation(self.pos) * Mat4::from_translation(rotation) *  Mat4::from_scale(1.0));
         self.pos = Vector3::new(rigid_body_set[self.body_handle].translation().x, rigid_body_set[self.body_handle].translation().y, rigid_body_set[self.body_handle].translation().z); 
-//        let angvel = 2.0*rigid_body_set[self.body_handle].angvel();
+    //        let angvel = 2.0*rigid_body_set[self.body_handle].angvel();
         let eulers = rigid_body_set[self.body_handle].rotation().euler_angles();
-//        println!("eulers:{:?} \n", eulers);
+    //        println!("eulers:{:?} \n", eulers);
         let rad0 = radians(eulers.0);
         let rad1 = radians(eulers.1);
         let rad2 = radians(eulers.2);
-//        println!("rads:{:?} {:?} {:?} \n", rad0, rad1, rad2);
+    //        println!("rads:{:?} {:?} {:?} \n", rad0, rad1, rad2);
 
         let rotxx = Mat4::from_angle_z(radians(eulers.2));
         let rotyy = Mat4::from_angle_y(radians(eulers.1));
         let rotzz = Mat4::from_angle_x(radians(eulers.0));
         let rot = rotxx*rotyy*rotzz;
-//        println!("rotxx:{:?} rotyy:{:?} rotzz:{:?}\n", rotxx, rotyy, rotzz);
+    //        println!("rotxx:{:?} rotyy:{:?} rotzz:{:?}\n", rotxx, rotyy, rotzz);
         self.sphere.set_transformation(Mat4::from_translation(self.pos) * rot * Mat4::from_scale(1.0));
         
     }
 }
-
-
-use three_d::*;
-use three_d::Window;
-use three_d::egui::*;
-use three_d_asset::io::*;
-use rapier3d::prelude::*;
-use std::f32::consts::PI;
-
 
 fn init_queue(camera: &mut Camera) -> Mat4 {
     let target: Vector3<f32> = Vector3::new(-0.63, 0.03, 0.01);
@@ -237,7 +242,6 @@ fn init_queue(camera: &mut Camera) -> Mat4 {
 
     trans
 }
-
 
 pub async fn run() {
 
@@ -380,7 +384,6 @@ pub async fn run() {
             },
         ),
     );
-    pick_mesh.set_transformation(Mat4::from_translation(Vector3::new(pushpoint.x, pushpoint.y, pushpoint.z)));
 
     // Table plate
     let mut loaded = if let Ok(loaded) =
@@ -1013,7 +1016,7 @@ pub async fn run() {
     });
 
     // Ball Cue
-    let mut ball_cue: XRSphere = XRSphere::new(
+    let mut ball_cue:XRSphere = XRSphere::new(
     //        Vector3::new(-0.4, 0.5, 0.0), 
     Vector3::new(-0.6, table_offset+0.1, 0.0), 
     //        Vector3::new(0.0, 0.1, 0.0), 
@@ -1028,6 +1031,7 @@ pub async fn run() {
         .remove(0), 
         &context);
     /* Create the bounding ball. */
+    let pos = ball_cue.init_pos();
     let rigid_body: RigidBody = RigidBodyBuilder::dynamic()
     //        .translation(vector![-0.1, 0.2, 0.0])
     .translation(vector![ball_cue.init_pos.x, ball_cue.init_pos.y, ball_cue.init_pos.z])
@@ -1049,7 +1053,7 @@ pub async fn run() {
     const LAST_BALL:usize = 15;
     let mut balls: Vec<XRSphere> = Vec::new();
     for idx in 1..=LAST_BALL {
-        let ball: XRSphere = XRSphere::new(
+        let ball = XRSphere::new(
         Vector3::new(0.0, table_offset+0.4, 0.0), 
         Vector3::new(0.0, 0.0, 0.0),
         Vector3::new(0.0, table_offset+0.4, 0.0), 
@@ -1202,6 +1206,11 @@ pub async fn run() {
     let mut rotz = Mat4::from_angle_y(radians(sl_zrot));
     let mut rotation = rotx*roty*rotz;
 
+    let trans: Matrix4<f32> = init_queue(&mut camera);
+    queue0.set_transformation(trans);
+    queue1.set_transformation(trans);
+    queue2.set_transformation(trans);
+    pick_mesh.set_transformation(Mat4::from_translation(Vector3::new(pushpoint.x, pushpoint.y, pushpoint.z)));
 
     window.render_loop(move |mut frame_input| {
         let mut panel_width = 0.0;
@@ -1217,8 +1226,6 @@ pub async fn run() {
                     Grid::new("g1").show(ui, |ui| {
                         ui.label("");
                         if ui.add(Button::new("Restart").min_size(three_d::egui::Vec2::new(100.0, 40.0))).clicked() {       
-                            println!("Restart clicked") ;                       
-
                             ball_cue.init(&mut rigid_body_set); 
                             for i in 0..LAST_BALL {
                                 balls[i].init(&mut rigid_body_set)
@@ -1236,13 +1243,11 @@ pub async fn run() {
                         ui.end_row();  
                     });   
 
-                   ui.separator();
+                    ui.separator();
 
                     Grid::new("g2").show(ui, |ui| {
                         ui.label("");
                         if ui.add(Button::new("O").min_size(three_d::egui::Vec2::new(100.0, 100.0))).clicked() {
-                            println!("O clicked") ;                       
-
                             center_pos = rigid_body_set[ball_cue.body_handle].center_of_mass().clone();
                             let pushdirection = camera.view_direction().normalize();
                             pushang = rapier3d::math::Vector::new(pushdirection.x, pushdirection.y, pushdirection.z) * push_impulse;
@@ -1253,7 +1258,7 @@ pub async fn run() {
                         ui.end_row();  
                     });                    
 
-                   ui.separator();
+                    ui.separator();
 
                     Grid::new("g3").show(ui, |ui| {
                         ui.style_mut().spacing.item_spacing = three_d::egui::Vec2::new(20.0, 10.0);
@@ -1286,6 +1291,7 @@ pub async fn run() {
                     ui.label(s);
                     let s = format!("{:?} {:?} {:?}", camera.position(), camera.target(), camera.up());
                     ui.label(s);
+
                     ui.allocate_space(ui.available_size());
                 });
                 panel_width = gui_context.used_rect().width();
@@ -1302,7 +1308,6 @@ pub async fn run() {
         camera.set_viewport(viewport);
 
         let mut control1 = FlyControl::new(0.01);
-
         let mut control2 = CameraControl::new();
         control2.left_drag_horizontal = CameraAction::OrbitLeft { target: *camera.target(), speed: 0.01 };
         control2.left_drag_vertical = CameraAction::OrbitUp { target: *camera.target(), speed: 0.01 };
@@ -1328,8 +1333,8 @@ pub async fn run() {
                     control2.scroll_vertical = CameraAction::Zoom { target: *camera.target(), speed: 0.001, min: 0.1, max: 20.0 };
                 }
                 if *button == MouseButton::Left {
-                    let pos:(f32, f32) = (position.0 as f32, position.1 as f32);
-                    if let Some(pick) = pick(&context, &camera, pos, &ball_cue.sphere) {
+//                    let pos:(f32, f32) = (position.0 as f32, position.1 as f32);
+                    if let Some(pick) = pick(&context, &camera, position, &ball_cue.sphere) {
                         let pickpoint: Matrix4<f32> = Mat4::from_translation(pick);
                         pushpoint = Point::new(pickpoint.w.x, pickpoint.w.y, pickpoint.w.z);
                         let target: Vector3<f32> = Vector3::new(pushpoint.x, pushpoint.y, pushpoint.z);
@@ -1432,7 +1437,19 @@ pub async fn run() {
             .chain(&queue0)
             .chain(&queue1)
             .chain(&queue2),
-    &lights);
+            &lights);
+
+        if change {
+            screen.render(
+                &camera,
+        ball_cue.sphere.into_iter()
+                .chain(&queue0)
+                .chain(&queue1)
+                .chain(&queue2)
+                .chain(&pick_mesh),
+        &[&ambient, &directional],
+            );
+        }
 
         screen.write(|| gui.render());
 
